@@ -1,0 +1,47 @@
+---
+version: '3.7'
+services:
+  app:
+    container_name: syspass-app
+    image: syspass/syspass:3.2.10 #Set this version tag to desired one(3.2.3) #SET 3.2.10
+    restart: always
+    # Will listen on ports 80 and 443 of the host; SET TO 8443/443
+    ports:
+      - "8080:80" #Original 80
+      - "8443:443" #Original 443
+    depends_on:
+      - db
+    volumes:
+      - syspass-config:/var/www/html/sysPass/app/config #SET PATH/TO/FOLDER/syspass-config:/var/www/html/sysPass/app/config
+      - syspass-backup:/var/www/html/sysPass/app/backup #SET PATH/TO/FOLDER/syspass-backup:/var/www/html/sysPass/app/backup 
+    # Set USE_SSL=no if you're using a LB or reverse proxy for SSL offloading
+    environment:
+      - USE_SSL=no #Original YES
+    network_mode: syspass-net
+  db:
+    container_name: syspass-db
+    restart: always
+    image: mariadb:10.2 #MOD 
+    # Set a secure password for MariaDB root user
+    environment:
+      - MYSQL_ROOT_PASSWORD=Syspass_Admin #MOD
+      - MYSQL_DATABASE=Syspass2023 #MOD 
+      - MYSQL_USER=Admin_Syspass #MOD
+      - MYSQL_PASSWORD=Syspass_2023 #MOD 
+    # This ports will only be accesible internally
+    expose:
+      - "3306"
+    volumes:
+      - syspass-db:/var/lib/mysql #SET PATH/TO/FOLDER/syspass-backup:/var/lib/mysql
+    network_mode: syspass-net
+
+# Persistent volumes to be used across updates
+volumes:
+  syspass-config: {} 
+  syspass-backup: {}
+  syspass-db: {}
+
+#networks:
+#  network:
+#    name: syspass-net
+#    external: true

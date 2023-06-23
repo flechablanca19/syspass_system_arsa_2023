@@ -1,0 +1,13 @@
+# Use root/example as user/password credentials
+
+version: '3.1'
+
+services:
+
+  adminer:                                      #ADD 
+    container_name: syspass-admin-db
+    image: adminer:4.8.1-standalone
+    restart: always
+    ports:
+      - 8081:8080  #MOD
+    network_mode: syspass-net
